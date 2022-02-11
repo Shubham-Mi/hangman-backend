@@ -19,11 +19,11 @@
 
 ```
   {
-    id: id,
-    livesLeft: lives,
-    result: !!GameSession.endedAt,
-    maskedWord: maskedWordArray,
-    playedLetters: GameSession.playedLetters,
+    id: 1,
+    livesLeft: 6,
+    result: false,
+    maskedWord: ['_', '_', '_', '_', '_', '_'],
+    playedLetters: "",
   }
 
 ```
