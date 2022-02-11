@@ -13,6 +13,7 @@ async function gameSessionSerializer(GameSession) {
     livesLeft: lives,
     result: !!GameSession.endedAt,
     maskedWord: maskedWordArray,
+    playedLetters: GameSession.playedLetters,
   };
 }
 
