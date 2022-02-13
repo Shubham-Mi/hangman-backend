@@ -1,6 +1,6 @@
 const express = require("express");
 const Router = require("./routes");
-const { sequelize, Word } = require("./models");
+const { sequelize } = require("./models");
 
 async function initialize() {
   const app = express();

@@ -19,6 +19,7 @@ class Word extends Model {}
 Word.init(
   {
     title: DataTypes.STRING,
+    difficulty: DataTypes.INTEGER,
   },
   { sequelize, modelName: "words" }
 );
