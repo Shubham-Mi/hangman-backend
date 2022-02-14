@@ -70,4 +70,5 @@ module.exports = {
   Player,
   SingleGame,
   GameSession,
+  GuestPlay,
 };
