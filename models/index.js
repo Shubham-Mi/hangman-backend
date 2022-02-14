@@ -4,17 +4,6 @@ const sequelize = new Sequelize({
   storage: "./database.sqlite",
 });
 
-class GameSession extends Model {}
-GameSession.init(
-  {
-    playerName: DataTypes.STRING,
-    playedLetters: DataTypes.STRING,
-    startedAt: DataTypes.DATE,
-    endedAt: DataTypes.DATE,
-  },
-  { sequelize, modelName: "game_sessions" }
-);
-
 class Word extends Model {}
 Word.init(
   {
@@ -24,10 +13,61 @@ Word.init(
   { sequelize, modelName: "words" }
 );
 
-GameSession.Word = GameSession.belongsTo(Word);
+class Player extends Model {}
+Player.init(
+  {
+    playerName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: DataTypes.STRING,
+    salt: DataTypes.STRING,
+  },
+  { sequelize, modelName: "players" }
+);
+
+class SingleGame extends Model {}
+SingleGame.init(
+  {
+    playedLetters: DataTypes.STRING,
+  },
+  { sequelize, modelName: "single_games" }
+);
+
+class GameSession extends Model {}
+GameSession.init(
+  {
+    currentLevel: DataTypes.INTEGER,
+    startedAt: DataTypes.DATE,
+    endedAt: DataTypes.DATE,
+  },
+  { sequelize, modelName: "game_sessions" }
+);
+
+class GuestPlay extends Model {}
+GuestPlay.init(
+  {
+    playerName: DataTypes.STRING,
+    playedLetters: DataTypes.STRING,
+    startedAt: DataTypes.DATE,
+    endedAt: DataTypes.DATE,
+  },
+  { sequelize, modelName: "guest_play" }
+);
+
+GuestPlay.Word = GuestPlay.belongsTo(Word);
+SingleGame.Word = SingleGame.belongsTo(Word);
+GameSession.Player = GameSession.belongsTo(Player);
+GameSession.Game = GameSession.belongsToMany(SingleGame, {
+  through: "game_player",
+  foreignKey: GameSession,
+});
 
 module.exports = {
-  GameSession,
-  Word,
   sequelize,
+  Word,
+  Player,
+  SingleGame,
+  GameSession,
 };

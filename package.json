@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
+    "password-salt-and-hash": "^1.0.5",
     "sequelize": "^6.15.0",
     "sqlite3": "^5.0.2"
   }
