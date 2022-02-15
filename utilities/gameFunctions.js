@@ -1,9 +1,9 @@
 const MAX_LIVES = 6;
 
-async function calculateLivesLeft(GameSession) {
-  const gameSessionWord = await GameSession.getWord();
-  const actualWord = gameSessionWord.title;
-  const playedLetters = GameSession.playedLetters.split("");
+async function calculateLivesLeft(SingleGame) {
+  const gameWord = await SingleGame.getWord();
+  const actualWord = gameWord.title;
+  const playedLetters = SingleGame.playedLetters.split("");
   const wordSet = new Set([...actualWord]);
 
   const wrongLetters = playedLetters.filter((letter) => {
@@ -15,10 +15,10 @@ async function calculateLivesLeft(GameSession) {
   return livesLeft;
 }
 
-async function calculateMaskedWord(GameSession) {
-  const gameSessionWord = await GameSession.getWord();
-  const actualWord = gameSessionWord.title;
-  const playedLetters = GameSession.playedLetters.split("");
+async function calculateMaskedWord(SingleGame) {
+  const gameWord = await SingleGame.getWord();
+  const actualWord = gameWord.title;
+  const playedLetters = SingleGame.playedLetters.split("");
   const played_set = new Set([...playedLetters]);
 
   const maskedWord = [...actualWord].map((letter) =>
@@ -28,7 +28,18 @@ async function calculateMaskedWord(GameSession) {
   return maskedWord;
 }
 
+async function calculateDifficulty(level) {
+  if (level < 4) {
+    return 1;
+  } else if (level < 7) {
+    return 2;
+  } else {
+    return 3;
+  }
+}
+
 module.exports = {
   calculateLivesLeft,
   calculateMaskedWord,
+  calculateDifficulty,
 };

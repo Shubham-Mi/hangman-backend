@@ -3,17 +3,17 @@ const {
   calculateMaskedWord,
 } = require("../utilities/gameFunctions");
 
-async function gameSessionSerializer(GameSession) {
-  const id = GameSession.id;
-  const lives = await calculateLivesLeft(GameSession);
-  const maskedWordArray = await calculateMaskedWord(GameSession);
+async function gameSessionSerializer(SingleGame) {
+  const gameId = SingleGame.id;
+  const lives = await calculateLivesLeft(SingleGame);
+  const maskedWordArray = await calculateMaskedWord(SingleGame);
 
   return {
-    id: id,
+    gameId: gameId,
     livesLeft: lives,
-    result: !!GameSession.endedAt,
+    result: !!SingleGame.endedAt,
     maskedWord: maskedWordArray,
-    playedLetters: GameSession.playedLetters,
+    playedLetters: SingleGame.playedLetters,
   };
 }
 

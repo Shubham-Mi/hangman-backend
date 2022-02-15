@@ -1,33 +1,76 @@
 const sequelize = require("sequelize");
-const { Word, GameSession } = require("../../models");
+const { Word, SingleGame, GameSession } = require("../../models");
+const { calculateDifficulty } = require("../../utilities/gameFunctions");
 const serializeGameSession = require("../../serializers/gameSession");
-const gameSessionService = require("../../services/gameSessionServices");
+const gameSessionServices = require("../../services/gameSessionServices");
 
 async function CreateSession(req, res) {
-  const name = req.body.name;
+  const playerId = req.body.id;
+  const difficulty = await calculateDifficulty(1);
   const word = await Word.findOne({
+    where: {
+      difficulty: difficulty,
+    },
     order: sequelize.fn("RANDOM"),
   });
-  const gameSession = await GameSession.create({
-    playerName: name,
+
+  const newGameSession = await GameSession.create({
+    currentLevel: 1,
+    startedAt: new Date(),
+    playerId: playerId,
+  });
+
+  const newGame = await SingleGame.create({
     playedLetters: "",
     wordId: word.id,
     startedAt: new Date(),
+    gameSessionId: newGameSession.id,
   });
 
-  res.json(await serializeGameSession(gameSession));
+  res.json(await serializeGameSession(newGame));
 }
 
-async function PlaySession(req, res) {
+async function PlayLetterInSingleGame(req, res) {
   const gameId = req.params.id;
   const letter = req.body.letter;
-  const gameSession = await GameSession.findByPk(gameId);
 
-  await gameSessionService.playLetterInGameSession(gameSession, letter);
-  res.json(await serializeGameSession(gameSession));
+  const singlegame = await SingleGame.findByPk(gameId);
+
+  await gameSessionServices.playLetterInGameSession(singlegame, letter);
+  res.json(await serializeGameSession(singlegame));
+}
+
+async function NextLevel(req, res) {
+  const gameId = req.params.id;
+  const singlegame = await SingleGame.findByPk(gameId);
+  const gameSessionId = singlegame.gameSessionId;
+  const gameSession = await GameSession.findByPk(gameSessionId);
+
+  const currentLevel = gameSession.currentLevel;
+  const newLevel = currentLevel + 1;
+
+  difficulty = await calculateDifficulty(newLevel);
+  await gameSession.update({ currentLevel: newLevel });
+
+  const word = await Word.findOne({
+    where: {
+      difficulty: difficulty,
+    },
+    order: sequelize.fn("RANDOM"),
+  });
+
+  const newGame = await SingleGame.create({
+    playedLetters: "",
+    wordId: word.id,
+    startedAt: new Date(),
+    gameSessionId: gameSession.id,
+  });
+
+  res.json(await serializeGameSession(newGame));
 }
 
 module.exports = {
   CreateSession,
-  PlaySession,
+  PlayLetterInSingleGame,
+  NextLevel,
 };

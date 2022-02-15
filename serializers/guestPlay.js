@@ -1,7 +1,7 @@
 const {
   calculateLivesLeft,
   calculateMaskedWord,
-} = require("../utilities/gameFunctions");
+} = require("../utilities/guestGameFunctions");
 
 async function guestGameSessionSerializer(guestGameSession) {
   const id = guestGameSession.id;

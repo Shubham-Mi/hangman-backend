@@ -14,24 +14,6 @@ CREATE TABLE IF NOT EXISTS `players` (
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL
 );
-CREATE TABLE IF NOT EXISTS `single_games` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-  `playedLetters` VARCHAR(255),
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
-  `wordId` INTEGER REFERENCES `words` (`id`) ON DELETE
-  SET NULL ON UPDATE CASCADE
-);
-CREATE TABLE IF NOT EXISTS `game_sessions` (
-  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-  `currentLevel` INTEGER,
-  `startedAt` DATETIME,
-  `endedAt` DATETIME,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
-  `playerId` INTEGER REFERENCES `players` (`id`) ON DELETE
-  SET NULL ON UPDATE CASCADE
-);
 CREATE TABLE IF NOT EXISTS `guest_plays` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
   `playerName` VARCHAR(255),
@@ -43,10 +25,24 @@ CREATE TABLE IF NOT EXISTS `guest_plays` (
   `wordId` INTEGER REFERENCES `words` (`id`) ON DELETE
   SET NULL ON UPDATE CASCADE
 );
-CREATE TABLE IF NOT EXISTS `game_player` (
+CREATE TABLE IF NOT EXISTS `single_games` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `playedLetters` VARCHAR(255),
+  `endedAt` DATETIME,
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
-  `game_sessions` INTEGER NOT NULL REFERENCES `game_sessions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  `singleGameId` INTEGER NOT NULL REFERENCES `single_games` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  PRIMARY KEY (`game_sessions`, `singleGameId`)
+  `wordId` INTEGER REFERENCES `words` (`id`) ON DELETE
+  SET NULL ON UPDATE CASCADE,
+    `gameSessionId` INTEGER REFERENCES `game_sessions` (`id`) ON DELETE
+  SET NULL ON UPDATE CASCADE
+);
+CREATE TABLE IF NOT EXISTS `game_sessions` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `currentLevel` INTEGER,
+  `startedAt` DATETIME,
+  `endedAt` DATETIME,
+  `createdAt` DATETIME NOT NULL,
+  `updatedAt` DATETIME NOT NULL,
+  `playerId` INTEGER REFERENCES `players` (`id`) ON DELETE
+  SET NULL ON UPDATE CASCADE
 );

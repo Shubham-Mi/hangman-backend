@@ -1,9 +1,10 @@
 const { calculateLivesLeft } = require("../utilities/gameFunctions");
+const { GameSession } = require("../models");
 
-async function markGameCompleted(GameSession) {
-  const gameSessionWord = await GameSession.getWord();
+async function markGameCompleted(SingleGame) {
+  const gameSessionWord = await SingleGame.getWord();
   const actualWord = gameSessionWord.title;
-  const playedLetters = GameSession.playedLetters.split("");
+  const playedLetters = SingleGame.playedLetters.split("");
   const word_set = new Set([...actualWord]);
   const played_set = new Set([...playedLetters]);
 
@@ -12,16 +13,23 @@ async function markGameCompleted(GameSession) {
     return acc;
   }, true);
 
-  const lives = await calculateLivesLeft(GameSession);
+  const lives = await calculateLivesLeft(SingleGame);
 
   if (lives === 0 || isWon) {
-    GameSession.endedAt = new Date();
-    await GameSession.save();
+    SingleGame.endedAt = new Date();
+    await SingleGame.save();
+
+    if (lives === 0) {
+      const gameSessionId = SingleGame.gameSessionId;
+      const gameSession = await GameSession.findByPk(gameSessionId);
+      gameSession.endedAt = new Date();
+      await gameSession.save();
+    }
   }
 }
 
-async function playLetterInGameSession(GameSession, letter) {
-  const playedLetters = GameSession.playedLetters.split("");
+async function playLetterInGameSession(SingleGame, letter) {
+  const playedLetters = SingleGame.playedLetters.split("");
   const playedSet = new Set([...playedLetters]);
 
   if (playedSet.has(letter)) {
@@ -29,9 +37,9 @@ async function playLetterInGameSession(GameSession, letter) {
   }
 
   playedLetters.push(letter);
-  GameSession.playedLetters = playedLetters.join("");
-  await GameSession.save();
-  await markGameCompleted(GameSession);
+  SingleGame.playedLetters = playedLetters.join("");
+  await SingleGame.save();
+  await markGameCompleted(SingleGame);
 }
 
 module.exports = {

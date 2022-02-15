@@ -1,7 +1,7 @@
 const sequelize = require("sequelize");
 const { Word, GuestPlay } = require("../../models");
-const serializeGuestGame = require("../../serializers/gameSession");
-const gameSessionService = require("../../services/gameSessionServices");
+const serializeGuestGame = require("../../serializers/guestPlay");
+const guestGameSessionService = require("../../services/guestGameSessionServices");
 
 async function createGuestSession(req, res) {
   const name = req.body.name;
@@ -23,7 +23,10 @@ async function PlaySession(req, res) {
   const letter = req.body.letter;
   const guestGameSession = await GuestPlay.findByPk(gameId);
 
-  await gameSessionService.playLetterInGameSession(guestGameSession, letter);
+  await guestGameSessionService.playLetterInGameSession(
+    guestGameSession,
+    letter
+  );
   res.json(await serializeGuestGame(guestGameSession));
 }
 

@@ -31,6 +31,7 @@ class SingleGame extends Model {}
 SingleGame.init(
   {
     playedLetters: DataTypes.STRING,
+    endedAt: DataTypes.DATE,
   },
   { sequelize, modelName: "single_games" }
 );
@@ -59,10 +60,7 @@ GuestPlay.init(
 GuestPlay.Word = GuestPlay.belongsTo(Word);
 SingleGame.Word = SingleGame.belongsTo(Word);
 GameSession.Player = GameSession.belongsTo(Player);
-GameSession.Game = GameSession.belongsToMany(SingleGame, {
-  through: "game_player",
-  foreignKey: GameSession,
-});
+GameSession.Game = GameSession.hasMany(SingleGame);
 
 module.exports = {
   sequelize,
