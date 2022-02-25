@@ -5,15 +5,15 @@ const {
 
 async function guestGameSessionSerializer(guestGameSession) {
   const id = guestGameSession.id;
-  const lives = await calculateLivesLeft(GameSession);
-  const maskedWordArray = await calculateMaskedWord(GameSession);
+  const lives = await calculateLivesLeft(guestGameSession);
+  const maskedWordArray = await calculateMaskedWord(guestGameSession);
 
   return {
     id: id,
     livesLeft: lives,
-    result: !!GameSession.endedAt,
+    result: !!guestGameSession.endedAt,
     maskedWord: maskedWordArray,
-    playedLetters: GameSession.playedLetters,
+    playedLetters: guestGameSession.playedLetters,
   };
 }
 
